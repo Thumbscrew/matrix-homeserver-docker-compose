@@ -1,0 +1,17 @@
+volumes:
+  synapse-data:
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:${IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - synapse-data:${CONFIG_DIR}
+    environment:
+      SYNAPSE_CONFIG_DIR: ${CONFIG_DIR}
+      SYNAPSE_CONFIG_PATH: ${CONFIG_DIR}/${CONFIG_FILE_NAME}
+      UID: ${UID}
+      GID: ${GID}
+      TZ: ${TZ}
+    ports:
+      - ${HTTP_PORT}:8008
