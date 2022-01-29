@@ -25,13 +25,31 @@ services:
     restart: unless-stopped
     volumes:
       - synapse-data:${CONFIG_DIR}
+    ports:
+      - 8008:8008
     environment:
       SYNAPSE_CONFIG_DIR: ${CONFIG_DIR}
       SYNAPSE_CONFIG_PATH: ${CONFIG_DIR}/${CONFIG_FILE_NAME}
       UID: ${UID}
       GID: ${GID}
       TZ: ${TZ}
-    ports:
-      - ${HTTP_PORT}:8008
     depends_on:
       - postgres
+
+  nginx:
+    build: nginx
+    restart: unless-stopped
+    ports:
+      - 443:443
+      - 8448:8448
+    volumes:
+      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
+      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
+      HTTPS_PORT: ${HTTPS_PORT}
+      FEDERATION_HTTPS_PORT: ${FEDERATION_HTTPS_PORT}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
+    depends_on:
+      - synapse
