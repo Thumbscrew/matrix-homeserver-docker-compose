@@ -1,9 +1,27 @@
 volumes:
   synapse-data:
+  postgres:
+
+secrets:
+  postgres_password:
+    file: ./postgres_password.txt
 
 services:
+  postgres:
+      image: postgres:${POSTGRESQL_IMAGE_TAG}
+      restart: unless-stopped
+      volumes:
+        - postgres:/var/lib/postgresql/data:rw
+      secrets:
+        - postgres_password
+      environment:
+        POSTGRES_DB: synapse
+        POSTGRES_USER: synapse_user
+        POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+        POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+
   synapse:
-    image: matrixdotorg/synapse:${IMAGE_TAG}
+    image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
     restart: unless-stopped
     volumes:
       - synapse-data:${CONFIG_DIR}
@@ -15,3 +33,5 @@ services:
       TZ: ${TZ}
     ports:
       - ${HTTP_PORT}:8008
+    depends_on:
+      - postgres
