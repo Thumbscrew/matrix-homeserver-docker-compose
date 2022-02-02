@@ -8,17 +8,17 @@ secrets:
 
 services:
   postgres:
-      image: postgres:${POSTGRESQL_IMAGE_TAG}
-      restart: unless-stopped
-      volumes:
-        - postgres:/var/lib/postgresql/data:rw
-      secrets:
-        - postgres_password
-      environment:
-        POSTGRES_DB: synapse
-        POSTGRES_USER: synapse_user
-        POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-        POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+    image: postgres:${POSTGRESQL_IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - postgres:/var/lib/postgresql/data:rw
+    secrets:
+      - postgres_password
+    environment:
+      POSTGRES_DB: synapse
+      POSTGRES_USER: synapse_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
 
   synapse:
     image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
@@ -43,8 +43,8 @@ services:
       - 443:443
       - 8448:8448
     volumes:
-      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
-      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
+      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}:ro
+      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}:ro
     environment:
       SERVER_NAME: ${SERVER_NAME}
       HTTPS_PORT: ${HTTPS_PORT}
