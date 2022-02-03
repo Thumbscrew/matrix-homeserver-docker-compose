@@ -2,6 +2,12 @@ secrets:
   postgres_password:
     file: ./postgres_password.txt
 
+networks:
+  frontend:
+    external: true
+    name: ${DOCKER_PROXY_NETWORK}
+  backend:
+
 services:
   postgres:
     image: postgres:${POSTGRESQL_IMAGE_TAG}
@@ -10,6 +16,8 @@ services:
       - ${VOLUME_PATH}/var/lib/postgresql/data:/var/lib/postgresql/data:rw
     secrets:
       - postgres_password
+    networks:
+      - backend
     environment:
       POSTGRES_DB: synapse
       POSTGRES_USER: synapse_user
@@ -23,6 +31,9 @@ services:
       - ${VOLUME_PATH}/data:/data:rw
     ports:
       - ${SYNAPSE_PORT}:8008
+    networks:
+      - frontend
+      - backend
     environment:
       SYNAPSE_CONFIG_DIR: /data
       SYNAPSE_CONFIG_PATH: /data/${CONFIG_FILE_NAME}
