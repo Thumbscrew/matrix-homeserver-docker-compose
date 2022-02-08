@@ -26,13 +26,13 @@ cp .env.example .env
 
 ### Generate `homeserver.yaml`
 
-1. Run the following command to use the `matrixdotorg/synapse` image to generate a `homeserver.yaml` file (replace `$VOLUME_PATH` and `$SERVER_NAME` with the values you set in your [.env](.env) file):
+1. Run the following command to use the `matrixdotorg/synapse` image to generate a `homeserver.yaml` file (replace `$VOLUME_PATH` with the value you set in your [.env](.env) file and `example.com` with your domain):
 
 ```bash
 sudo docker run -it --rm \
     --mount type=bind,src=$VOLUME_PATH/data,dst=/data \
-    -e SYNAPSE_SERVER_NAME=$SERVER_NAME \
-    -e SYNAPSE_REPORT_STATS=no \ # Change to yes if you wish to report stats to Matrix
+    -e SYNAPSE_SERVER_NAME=example.com \ `# Replace with your domain`
+    -e SYNAPSE_REPORT_STATS=no \ `# Change to yes if you wish to report stats to Matrix`
     matrixdotorg/synapse:latest generate
 ```
 
@@ -65,7 +65,9 @@ database:
     cp_max: 10
 ```
 
-5. Bring up the containers!
+5. Locate the `public_baseurl` setting in `homeserver.yaml` and set it to the URL of your Matrix server domain name (e.g. `matrix.example.com`)
+
+6. Bring up the containers!
 
 ```bash
 sudo docker-compose -p matrix-synapse up -d
