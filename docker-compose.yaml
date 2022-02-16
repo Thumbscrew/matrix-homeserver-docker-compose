@@ -42,3 +42,15 @@ services:
       TZ: ${TZ}
     depends_on:
       - postgres
+
+  admin:
+    image: awesometechnologies/synapse-admin:latest
+    restart: unless-stopped
+    networks:
+      - frontend
+    ports:
+      - ${SYNAPSE_ADMIN_PORT}:80
+    environment:
+      REACT_APP_SERVER: ${SERVER_NAME}
+    depends_on:
+      - synapse
