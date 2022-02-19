@@ -51,6 +51,6 @@ services:
     ports:
       - ${SYNAPSE_ADMIN_PORT}:80
     environment:
-      REACT_APP_SERVER: ${SERVER_NAME}
+      REACT_APP_SERVER: https://${SERVER_NAME}
     depends_on:
       - synapse
