@@ -29,6 +29,11 @@ services:
     restart: unless-stopped
     volumes:
       - ${VOLUME_PATH}/data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1G"
+        max-file: 3
     ports:
       - ${SYNAPSE_PORT}:8008
     networks:
