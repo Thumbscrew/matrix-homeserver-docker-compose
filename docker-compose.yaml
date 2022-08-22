@@ -1,6 +1,7 @@
-secrets:
-  postgres_password:
-    file: ./postgres_password.txt
+# Uncomment if you want to use PostgreSQL in a Docker container
+# secrets:
+#   postgres_password:
+#     file: ./postgres_password.txt
 
 networks:
   frontend:
@@ -53,8 +54,8 @@ services:
       UID: ${UID}
       GID: ${GID}
       TZ: ${TZ}
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
 
   synapse-generic-worker-1:
     image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
