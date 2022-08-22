@@ -38,8 +38,9 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "1G"
+        max-size: "100M"
         max-file: "3"
+    mem_limit: ${SYNAPSE_MEM_LIMIT:-2g}
     ports:
       - ${SYNAPSE_PORT}:8008
     networks:
@@ -53,3 +54,99 @@ services:
       TZ: ${TZ}
     depends_on:
       - postgres
+
+  synapse-generic-worker-1:
+    image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
+    restart: unless-stopped
+    entrypoint: ["/start.py", "run", "--config-path=/data/${CONFIG_FILE_NAME}", "--config-path=/data/workers/synapse-generic-worker-1.yaml"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fSs http://localhost:8081/health || exit 1"]
+      start_period: "5s"
+      interval: "15s"
+      timeout: "5s"
+    volumes:
+      - ${VOLUME_PATH}/data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    mem_limit: ${WORKER_MEM_LIMIT:-512m}
+    networks:
+      - frontend
+      - backend
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_WORKER: synapse.app.generic_worker
+    depends_on:
+      - synapse
+
+  synapse-generic-worker-2:
+    image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
+    restart: unless-stopped
+    entrypoint: ["/start.py", "run", "--config-path=/data/${CONFIG_FILE_NAME}", "--config-path=/data/workers/synapse-generic-worker-2.yaml"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fSs http://localhost:8081/health || exit 1"]
+      start_period: "5s"
+      interval: "15s"
+      timeout: "5s"
+    volumes:
+      - ${VOLUME_PATH}/data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    mem_limit: ${WORKER_MEM_LIMIT:-512m}
+    networks:
+      - frontend
+      - backend
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_WORKER: synapse.app.generic_worker
+    depends_on:
+      - synapse
+
+  synapse-federation-sender-1:
+    image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
+    restart: unless-stopped
+    entrypoint: ["/start.py", "run", "--config-path=/data/${CONFIG_FILE_NAME}", "--config-path=/data/workers/synapse-federation-sender-1.yaml"]
+    healthcheck:
+      disable: true
+    volumes:
+      - ${VOLUME_PATH}/data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    mem_limit: ${WORKER_MEM_LIMIT:-512m}
+    networks:
+      - backend
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_WORKER: synapse.app.federation_sender
+    depends_on:
+      - synapse
+
+  synapse-federation-sender-2:
+    image: matrixdotorg/synapse:${SYNAPSE_IMAGE_TAG}
+    restart: unless-stopped
+    entrypoint: ["/start.py", "run", "--config-path=/data/${CONFIG_FILE_NAME}", "--config-path=/data/workers/synapse-federation-sender-2.yaml"]
+    healthcheck:
+      disable: true
+    volumes:
+      - ${VOLUME_PATH}/data:/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    mem_limit: ${WORKER_MEM_LIMIT:-512m}
+    networks:
+      - backend
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_WORKER: synapse.app.federation_sender
+    depends_on:
+      - synapse
