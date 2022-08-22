@@ -67,6 +67,10 @@ database:
 
 5. Locate the `public_baseurl` setting in `homeserver.yaml` and set it to the URL of your Matrix server domain name (e.g. `matrix.example.com`)
 
+### Configure Synapse Workers
+
+The provided [docker-compose.yaml](docker-compose.yaml) contains 4 workers (2 generic and 2 federation senders). See [Synapse Workers docs](https://matrix-org.github.io/synapse/latest/workers.html#available-worker-applications) for the different types. See the [Example worker configs README](example-worker-configs/README.md) for more detail.
+
 6. Bring up the containers!
 
 ```bash
